@@ -9,8 +9,8 @@ st.set_page_config(page_title="Ukur Aras PUO - DCG40502", layout="centered")
 col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     try:
-        logo = Image.open('PUO_Logo.png')
-        st.image(logo, width=180)
+        logo = Image.open('image_2026-04-07_114827697.png')
+        st.image(logo, width=350)
     except:
         st.info("Logo PUO (Sila pastikan fail PUO_Logo.png ada di GitHub)")
 
