@@ -1,6 +1,30 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import flet as ft
+
+def main(page: ft.Page):
+    page.title = "App Ukur Aras JKA"
+    
+    # Input Fields
+    tbm_input = ft.TextField(label="TBM Mula", value="44.725")
+    bs_input = ft.TextField(label="Pandangan Belakang (BS)")
+    result_text = ft.Text()
+
+    def hitung(e):
+        tgk = float(tbm_input.value) + float(bs_input.value)
+        result_text.value = f"TGK Anda: {tgk:.3f}"
+        page.update()
+
+    page.add(
+        ft.Text("Kalkulator Aras Laras", size=30, weight="bold"),
+        tbm_input,
+        bs_input,
+        ft.ElevatedButton("Kira TGK", on_click=hitung),
+        result_text
+    )
+
+ft.app(target=main)
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="Ukur Aras PUO - DCG40502", layout="centered")
