@@ -11,8 +11,8 @@ st.set_page_config(page_title="Ukur Aras PUO", layout="centered")
 col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     try:
-        logo = Image.open('PUO_Logo.png')
-        st.image(logo, width=180)
+        logo = Image.open('image_2026-04-07_114827697.png')
+        st.image(logo, width=350)
     except:
         st.info("Logo PUO akan dipaparkan di sini.")
 
