@@ -34,8 +34,8 @@ with st.container():
 
 # 3. INPUT TETAPAN ARAS
 st.subheader("⚙️ Tetapan Aras Laras")
-tbm_mula = st.number_input("Aras Laras Awal (TBM 1):", value=44.725, format="%.3f", key="input_tbm_awal")
-tbm_akhir_sebenar = st.number_input("Aras Laras Akhir Sebenar (Closing TBM):", value=44.729, format="%.3f", key="input_tbm_akhir")
+tbm_mula = st.number_input("Aras Laras Awal (TBM 1):", value=0.000, format="%.3f", key="input_tbm_awal")
+tbm_akhir_sebenar = st.number_input("Aras Laras Akhir Sebenar (Closing TBM):", value=0.000, format="%.3f", key="input_tbm_akhir")
 
 # 4. JADUAL INPUT DATA (KOSONG UNTUK MANUAL INPUT)
 st.subheader("📝 Input Data Pandangan (BS, IS, FS)")
