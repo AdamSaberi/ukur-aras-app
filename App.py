@@ -2,19 +2,28 @@ import streamlit as st
 import pandas as pd
 import streamlit as st
 import pandas as pd
-from PIL import Image # Tambah library ni untuk proses gambar
+from PIL import Image
 
-# 1. Paparkan Logo PUO kat atas sekali
-# Pastikan nama fail sama dengan apa yang kau upload kat GitHub
-try:
-    logo = Image.open('image_2026-04-07_114827697.png')
-    # Use_container_width=False supaya logo tak jadi terlalu besar
-    st.image(logo, width=300) 
-except:
-    st.warning("Logo tidak dijumpai. Pastikan fail logo.png ada dalam GitHub.")
+# 1. Setting Page (Optional: Untuk nampak lebih kemas)
+st.set_page_config(page_title="Ukur Aras PUO", layout="centered")
 
-st.title("📟 Sistem Pembukuan Ukur Aras JKA")
-# ... sambung koding pengiraan kau kat bawah ni ...
+# 2. Susunan Logo supaya duduk di tengah (Center)
+col1, col2, col3 = st.columns([1, 1, 1]) # Bahagi 3 ruang sama rata
+
+with col2: # Kita guna kolum tengah (col2)
+    try:
+        logo = Image.open('PUO_Logo.png') # Pastikan nama fail sama kat GitHub
+        st.image(logo, width=200) 
+    except:
+        st.warning("Fail PUO_Logo.png tidak dijumpai dalam GitHub.")
+
+# 3. Tajuk yang juga di tengah
+st.markdown("<h1 style='text-align: center;'>📟 Sistem Pembukuan Ukur Aras JKA</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Politeknik Ungku Omar</p>", unsafe_allow_html=True)
+
+st.divider()
+
+# ... Sambung koding pengiraan RL, Pembetulan & RL Sebenar kau kat sini ...
 
 st.title("📟 Kalkulator Ukur Aras (Lengkap dengan Pembetulan)")
 
