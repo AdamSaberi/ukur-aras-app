@@ -7,7 +7,7 @@ from PIL import Image # Tambah library ni untuk proses gambar
 # 1. Paparkan Logo PUO kat atas sekali
 # Pastikan nama fail sama dengan apa yang kau upload kat GitHub
 try:
-    logo = Image.open('PUO_Logo.png')
+    logo = Image.open('image_2026-04-07_114827697.png')
     # Use_container_width=False supaya logo tak jadi terlalu besar
     st.image(logo, width=150) 
 except:
