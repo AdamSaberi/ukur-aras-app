@@ -4,27 +4,48 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 
-# 1. Setting Page (Optional: Untuk nampak lebih kemas)
+# 1. Konfigurasi Halaman
 st.set_page_config(page_title="Ukur Aras PUO", layout="centered")
 
-# 2. Susunan Logo supaya duduk di tengah (Center)
-col1, col2, col3 = st.columns([1, 1, 1]) # Bahagi 3 ruang sama rata
-
-with col2: # Kita guna kolum tengah (col2)
+# 2. Susunan Logo di Tengah
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
     try:
-        logo = Image.open('image_2026-04-07_114827697.png') # Pastikan nama fail sama kat GitHub
-        st.image(logo, width=350) 
+        logo = Image.open('PUO_Logo.png')
+        st.image(logo, width=180)
     except:
-        st.warning("Fail PUO_Logo.png tidak dijumpai dalam GitHub.")
+        st.info("Logo PUO akan dipaparkan di sini.")
 
-# 3. Tajuk yang juga di tengah
-st.markdown("<h1 style='text-align: center;'>📟 Sistem Pembukuan Ukur Aras JKA</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Politeknik Ungku Omar</p>", unsafe_allow_html=True)
+# 3. Muka Depan (Maklumat Kumpulan & Kursus)
+st.markdown("<h1 style='text-align: center; color: #FFD700;'>SISTEM PEMBUKUAN UKUR ARAS (TGK)</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>DIPLOMA GEOMATIK, JKA PUO</h3>", unsafe_allow_html=True)
 
-st.divider()
+# Guna container untuk nampak macam 'kad' maklumat
+with st.container():
+    st.divider()
+    
+    col_a, col_b = st.columns([0.4, 0.6])
+    
+    with col_a:
+        st.write("**Kod Kursus:**")
+        st.write("**Pereka App:**")
+        st.write("**Ahli Kumpulan:**")
 
-# ... Sambung koding pengiraan RL, Pembetulan & RL Sebenar kau kat sini ...
+    with col_b:
+        st.write("DCG40502")
+        st.write("Muhammad Adam bin Saberi")
+        st.write("1. Ainur Farisha Husna binti Abdul Hakim")
+        st.write("2. Nur Jazzrene Fatishah binti Azmi")
+        st.write("3. Muhammad Adam bin Saberi")
+    
+    st.divider()
 
+# 4. Input Aras Mula (Bahagian Pengiraan Bermula Sini)
+st.subheader("⚙️ Tetapan Aras Laras")
+tbm_mula = st.number_input("Aras Laras Awal (TBM 1):", value=44.725, format="%.3f")
+tbm_akhir_sebenar = st.number_input("Aras Laras Akhir Sebenar (Closing TBM):", value=44.729, format="%.3f")
+
+# ... Sambung dengan koding st.data_editor dan fungsi calculate kau yang sebelum ni ...
 st.title("📟 Kalkulator Ukur Aras (Lengkap dengan Pembetulan)")
 
 tbm_mula = st.number_input("Aras Laras Awal (TBM 1):", value=44.725, format="%.3f")
