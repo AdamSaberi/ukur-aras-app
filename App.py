@@ -9,7 +9,7 @@ from PIL import Image # Tambah library ni untuk proses gambar
 try:
     logo = Image.open('image_2026-04-07_114827697.png')
     # Use_container_width=False supaya logo tak jadi terlalu besar
-    st.image(logo, width=150) 
+    st.image(logo, width=300) 
 except:
     st.warning("Logo tidak dijumpai. Pastikan fail logo.png ada dalam GitHub.")
 
