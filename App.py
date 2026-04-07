@@ -1,5 +1,20 @@
 import streamlit as st
 import pandas as pd
+import streamlit as st
+import pandas as pd
+from PIL import Image # Tambah library ni untuk proses gambar
+
+# 1. Paparkan Logo PUO kat atas sekali
+# Pastikan nama fail sama dengan apa yang kau upload kat GitHub
+try:
+    logo = Image.open('logo.png')
+    # Use_container_width=False supaya logo tak jadi terlalu besar
+    st.image(logo, width=150) 
+except:
+    st.warning("Logo tidak dijumpai. Pastikan fail logo.png ada dalam GitHub.")
+
+st.title("📟 Sistem Pembukuan Ukur Aras JKA")
+# ... sambung koding pengiraan kau kat bawah ni ...
 
 st.title("📟 Kalkulator Ukur Aras (Lengkap dengan Pembetulan)")
 
