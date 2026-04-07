@@ -13,7 +13,7 @@ col1, col2, col3 = st.columns([1, 1, 1]) # Bahagi 3 ruang sama rata
 with col2: # Kita guna kolum tengah (col2)
     try:
         logo = Image.open('image_2026-04-07_114827697.png') # Pastikan nama fail sama kat GitHub
-        st.image(logo, width=200) 
+        st.image(logo, width=350) 
     except:
         st.warning("Fail PUO_Logo.png tidak dijumpai dalam GitHub.")
 
