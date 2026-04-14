@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import math
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="Ukur Aras PUO - DCG40502", layout="centered")
@@ -12,7 +13,7 @@ with col2:
         logo = Image.open('image_2026-04-07_114827697.png')
         st.image(logo, width=350)
     except:
-        st.info("Logo PUO (Sila pastikan fail PUO_Logo.png ada di GitHub)")
+        st.info("Logo PUO (Sila pastikan fail logo ada di GitHub)")
 
 st.markdown("<h1 style='text-align: center; color: #FFD700;'>SISTEM PEMBUKUAN UKUR ARAS (TGK)</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>DIPLOMA GEOMATIK, JKA PUO</h3>", unsafe_allow_html=True)
@@ -37,20 +38,19 @@ st.subheader("⚙️ Tetapan Aras Laras")
 tbm_mula = st.number_input("Aras Laras Awal (TBM 1):", value=0.000, format="%.3f", key="input_tbm_awal")
 tbm_akhir_sebenar = st.number_input("Aras Laras Akhir Sebenar (Closing TBM):", value=0.000, format="%.3f", key="input_tbm_akhir")
 
-# 4. JADUAL INPUT DATA (KOSONG UNTUK MANUAL INPUT)
-st.subheader("📝 Input Data Pandangan (BS, IS, FS)")
+# 4. JADUAL INPUT DATA
+st.subheader("📝 Input Data Pandangan (BS, IS, FS) & Jarak")
 
 if 'survey_data' not in st.session_state:
-    # Kita buat DataFrame kosong dengan kolum yang betul
     data = {
         "Stesen/Remark": [""],
         "BS": [None],
         "IS": [None],
         "FS": [None],
+        "Jarak (m)": [0.0] # Tambah kolum Jarak
     }
     st.session_state.survey_data = pd.DataFrame(data)
 
-# Gunakan num_rows="dynamic" supaya kau boleh tambah baris sendiri guna butang (+)
 edited_df = st.data_editor(
     st.session_state.survey_data, 
     num_rows="dynamic", 
@@ -58,24 +58,27 @@ edited_df = st.data_editor(
     key="main_editor"
 )
 
-# 5. FUNGSI PENGIRAAN LENGKAP (TGK -> RL -> PEMBETULAN)
+# 5. FUNGSI PENGIRAAN LENGKAP
 def calculate_full_process(df, initial_rl, final_rl_known):
     rl_list = []
     tgk_list = []
     current_rl = initial_rl
     current_tgk = None
     
-    # Kira RL & TGK (Logik Sequential)
+    # Tukar data ke numerik untuk elak error
+    df['BS'] = pd.to_numeric(df['BS']).fillna(0)
+    df['IS'] = pd.to_numeric(df['IS']).fillna(0)
+    df['FS'] = pd.to_numeric(df['FS']).fillna(0)
+    df['Jarak (m)'] = pd.to_numeric(df['Jarak (m)']).fillna(0)
+    
     for i, row in df.iterrows():
-        bs = float(row['BS']) if pd.notnull(row['BS']) else 0
-        is_val = float(row['IS']) if pd.notnull(row['IS']) else 0
-        fs = float(row['FS']) if pd.notnull(row['FS']) else 0
+        bs = row['BS']
+        is_val = row['IS']
+        fs = row['FS']
         
-        # Penentuan TGK Pertama
         if i == 0 and bs > 0:
             current_tgk = initial_rl + bs
             current_rl = initial_rl
-        # Penolakan TGK ke IS/FS untuk dapatkan RL (Guna TGK sedia ada)
         elif is_val > 0:
             current_rl = current_tgk - is_val
         elif fs > 0:
@@ -84,16 +87,16 @@ def calculate_full_process(df, initial_rl, final_rl_known):
         rl_list.append(round(current_rl, 3))
         tgk_list.append(round(current_tgk, 3) if current_tgk else None)
         
-        # Kemaskini TGK baru jika ada BS (Change Point)
         if i > 0 and bs > 0:
             current_tgk = current_rl + bs
             tgk_list[-1] = round(current_tgk, 3)
 
-    # Pengiraan Pembetulan (Correction)
+    # Kira Ralat (Misclosure)
     rl_akhir_kiraan = rl_list[-1]
     total_error = round(rl_akhir_kiraan - final_rl_known, 3)
-    num_stations = len(df) - 1 if len(df) > 1 else 1
     
+    # Pengiraan Pembetulan
+    num_stations = len(df) - 1 if len(df) > 1 else 1
     pembetulan_list = []
     rl_sebenar_list = []
     
@@ -120,23 +123,41 @@ if st.button("JALANKAN PENGIRAAN", type="primary", key="btn_kira"):
     st.write("### Jadual Pembukuan Lengkap")
     st.dataframe(result, use_container_width=True)
     
-    # Semakan Aritmetik
+    # Semakan Aritmetik & Had Selisih
     st.divider()
-    st.subheader("📊 Semakan Aritmetik & Ralat")
+    st.subheader("📊 Semakan Aritmetik & Had Selisih")
     
-    sum_bs = pd.to_numeric(result['BS']).sum()
-    sum_fs = pd.to_numeric(result['FS']).sum()
+    # 1. Kira Jumlah Jarak & Had Selisih
+    total_distance_m = result['Jarak (m)'].sum()
+    total_distance_km = total_distance_m / 1000
+    
+    # Formula: 0.012 * sqrt(K)
+    allowable_error = round(0.012 * math.sqrt(total_distance_km), 3) if total_distance_km > 0 else 0.000
+    abs_error = abs(error)
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Jumlah Jarak", f"{total_distance_m} m")
+    col2.metric("Had Selisih (0.012√km)", f"± {allowable_error} m")
+    col3.metric("Ralat (Misclosure)", f"{error} m")
+
+    # Logik Semakan
+    st.write("---")
+    
+    # Semakan 1: Aritmetik
+    sum_bs = result['BS'].sum()
+    sum_fs = result['FS'].sum()
     diff_bs_fs = round(sum_bs - sum_fs, 3)
     diff_rl = round(result['Aras Laras'].iloc[-1] - tbm_mula, 3)
     
-    col1, col2, col3 = st.columns(3)
-    col1.metric("ΣBS - ΣFS", f"{diff_bs_fs} m")
-    col2.metric("RL Akhir - RL Awal", f"{diff_rl} m")
-    col3.metric("Ralat (Misclosure)", f"{error} m")
-    
     if diff_bs_fs == diff_rl:
-        st.success("Semakan Aritmetik: TEPAT")
+        st.write("✔️ **Semakan Aritmetik:** Tepat")
     else:
-        st.error("Semakan Aritmetik: TIDAK TEPAT (Sila semak input)")
+        st.write("❌ **Semakan Aritmetik:** Tidak Tepat")
+
+    # Semakan 2: Had Selisih
+    if abs_error <= allowable_error:
+        st.success(f"✅ **HASIL:** Semakan Tepat!! (Ralat {abs_error}m ≤ Had {allowable_error}m)")
+    else:
+        st.error(f"⚠️ **HASIL:** Semakan Gagal dan perlu buat pengukuran semula. (Ralat {abs_error}m > Had {allowable_error}m)")
 
 st.markdown("<br><hr><p style='text-align: center; color: gray;'>© 2026 Muhammad Adam - JKA PUO</p>", unsafe_allow_html=True)
