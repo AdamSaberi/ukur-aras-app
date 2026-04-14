@@ -49,10 +49,10 @@ st.caption("Nota: Masukkan jarak kumulatif (meter). Jarak pada baris terakhir ak
 if 'survey_data' not in st.session_state:
     data = {
         "Stesen/Remark": ["TBM 1", "CP 1"],
-        "BS": [1.500, None],
+        "BS": [None, None],
         "IS": [None, None],
-        "FS": [None, 1.200],
-        "Jarak (m)": [0.0, 50.0]
+        "FS": [None, None],
+        "Jarak (m)": [0.0, 0.0]
     }
     st.session_state.survey_data = pd.DataFrame(data)
 
